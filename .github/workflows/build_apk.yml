@@ -7,9 +7,14 @@ on:
     branches: [ "main", "master" ]
   workflow_dispatch:
 
+# Cancela ejecuciones anteriores si se hace push continuo
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-apk:
-    name: Compilar APK de Flutter
+    name: ⚡ Compilación Ultrarrápida APK
     runs-on: ubuntu-latest
 
     steps:
@@ -21,24 +26,29 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+          cache: 'gradle'
 
-      - name: 🐦 Configurar Flutter SDK
+      - name: 🐦 Configurar Flutter SDK (con caché activo)
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           cache: true
+          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
 
-      - name: 🛠️ Inicializar estructura de plataforma (si es necesario)
-        run: |
-          if [ ! -d "android" ]; then
-            echo "Generando carpeta android..."
-            flutter create . --org com.example --project-name sesion1
-          fi
+      - name: 💾 Caché de dependencias Pub de Dart
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.PUB_CACHE }}
+            ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
 
       - name: 📦 Descargar dependencias
         run: flutter pub get
 
-      - name: 🚀 Compilar APK (Release)
+      - name: 🚀 Compilar APK Release optimizado
         run: flutter build apk --release
 
       - name: 📤 Subir APK como artefacto descargable
@@ -47,4 +57,4 @@ jobs:
           name: sesion1-app-release
           path: build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 14
