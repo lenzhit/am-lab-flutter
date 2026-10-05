@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final username = _userController.text.trim();
     final password = _passController.text.trim();
 
-    // Consulta SQL a la base de datos local SQLite
+    // Consulta a la base de datos local
     final user = await DatabaseHelper.instance.login(username, password);
 
     setState(() {
@@ -55,112 +55,12 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Usuario o contraseña incorrectos en SQLite'),
+          content: Text('Usuario o contraseña incorrectos'),
           backgroundColor: Colors.redAccent,
           duration: Duration(seconds: 3),
         ),
       );
     }
-  }
-
-  // Modal para registrar un nuevo usuario en la base de datos SQLite
-  void _showRegisterDialog() {
-    final regUserCtrl = TextEditingController();
-    final regPassCtrl = TextEditingController();
-    final regNameCtrl = TextEditingController();
-    final regFormKey = GlobalKey<FormState>();
-
-    showDialog(
-      context: context,
-      builder: (dialogCtx) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.person_add_alt_1, color: Colors.amber),
-            SizedBox(width: 8),
-            Text('Registrar en SQLite', style: TextStyle(fontSize: 18)),
-          ],
-        ),
-        content: SingleChildScrollView(
-          child: Form(
-            key: regFormKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  controller: regNameCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Nombre Completo',
-                    icon: Icon(Icons.badge_outlined),
-                  ),
-                  validator: (v) =>
-                      v == null || v.trim().isEmpty ? 'Ingresa el nombre' : null,
-                ),
-                TextFormField(
-                  controller: regUserCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Nombre de Usuario',
-                    icon: Icon(Icons.person_outline),
-                  ),
-                  validator: (v) =>
-                      v == null || v.trim().isEmpty ? 'Ingresa el usuario' : null,
-                ),
-                TextFormField(
-                  controller: regPassCtrl,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Contraseña',
-                    icon: Icon(Icons.lock_outline),
-                  ),
-                  validator: (v) =>
-                      v == null || v.trim().isEmpty ? 'Ingresa contraseña' : null,
-                ),
-              ],
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogCtx),
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.amber,
-              foregroundColor: Colors.white,
-            ),
-            onPressed: () async {
-              if (regFormKey.currentState!.validate()) {
-                final ok = await DatabaseHelper.instance.registerUser(
-                  username: regUserCtrl.text,
-                  password: regPassCtrl.text,
-                  fullName: regNameCtrl.text,
-                );
-                if (!mounted) return;
-                Navigator.pop(dialogCtx);
-                if (ok) {
-                  _userController.text = regUserCtrl.text.trim();
-                  _passController.text = regPassCtrl.text.trim();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('¡Usuario registrado con éxito en SQLite!'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('El usuario ya existe en la base de datos'),
-                      backgroundColor: Colors.redAccent,
-                    ),
-                  );
-                }
-              }
-            },
-            child: const Text('Guardar'),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -190,12 +90,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
-                      Icons.lock_person_rounded,
-                      size: 68,
+                      Icons.person_pin_rounded,
+                      size: 70,
                       color: Colors.amber,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 22),
                   const Text(
                     'Iniciar Sesión',
                     style: TextStyle(
@@ -206,14 +106,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Autenticación con Base de Datos SQLite',
+                    'Ingresa tus credenciales para continuar',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: Colors.grey[600],
                     ),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 30),
                   TextFormField(
                     controller: _userController,
                     decoration: InputDecoration(
@@ -236,7 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 18),
                   TextFormField(
                     controller: _passController,
                     obscureText: _obscurePassword,
@@ -271,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 28),
                   SizedBox(
                     width: double.infinity,
                     height: 50,
@@ -303,19 +203,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.amber.shade900,
-                      side: const BorderSide(color: Colors.amber),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    onPressed: _showRegisterDialog,
-                    icon: const Icon(Icons.person_add, size: 18),
-                    label: const Text('Registrar nuevo usuario en SQLite'),
                   ),
                 ],
               ),

@@ -34,7 +34,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // Insertar usuarios por defecto para pruebas y exposición
+    // Usuarios predeterminados del sistema
     await db.insert('users', {
       'username': 'lenner',
       'password': '123456',
@@ -48,7 +48,7 @@ class DatabaseHelper {
     });
   }
 
-  // Método para autenticar usuario
+  // Método de autenticación
   Future<Map<String, dynamic>?> login(String username, String password) async {
     final db = await instance.database;
     final maps = await db.query(
@@ -65,7 +65,7 @@ class DatabaseHelper {
     }
   }
 
-  // Método para registrar un nuevo usuario en la base de datos
+  // Registro de usuario
   Future<bool> registerUser({
     required String username,
     required String password,
@@ -80,14 +80,7 @@ class DatabaseHelper {
       });
       return true;
     } catch (e) {
-      // Error por clave única (username duplicado) u otro
       return false;
     }
-  }
-
-  // Consultar todos los usuarios registrados
-  Future<List<Map<String, dynamic>>> getAllUsers() async {
-    final db = await instance.database;
-    return await db.query('users', columns: ['id', 'username', 'full_name']);
   }
 }
