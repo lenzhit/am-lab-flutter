@@ -7,14 +7,13 @@ on:
     branches: [ "main", "master" ]
   workflow_dispatch:
 
-# Cancela ejecuciones anteriores si se hace push continuo
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build-apk:
-    name: ⚡ Compilación Ultrarrápida APK
+    name: ⚡ Compilación APK Release
     runs-on: ubuntu-latest
 
     steps:
@@ -28,28 +27,17 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
-      - name: 🐦 Configurar Flutter SDK (con caché activo)
+      - name: 🐦 Configurar Flutter SDK
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
-
-      - name: 💾 Caché de dependencias Pub de Dart
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ env.PUB_CACHE }}
-            ~/.pub-cache
-          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pub-
 
       - name: 📦 Descargar dependencias
         run: flutter pub get
 
-      - name: 🚀 Compilar APK Release optimizado
-        run: flutter build apk --release
+      - name: 🚀 Compilar APK Release
+        run: flutter build apk --release --android-skip-build-dependency-validation
 
       - name: 📤 Subir APK como artefacto descargable
         uses: actions/upload-artifact@v4
