@@ -63,7 +63,7 @@ class HomeScreen extends StatelessWidget {
                     letterSpacing: 1.2,
                   ),
                 ),
-                const SizedBox(height: 25),
+                const SizedBox(height: 20),
                 Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
@@ -83,7 +83,7 @@ class HomeScreen extends StatelessWidget {
                     backgroundImage: AssetImage('assets/img/persona.png'),
                   ),
                 ),
-                const SizedBox(height: 25),
+                const SizedBox(height: 20),
                 Text(
                   userName,
                   style: const TextStyle(
@@ -102,7 +102,17 @@ class HomeScreen extends StatelessWidget {
                     color: Colors.grey[600],
                   ),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 12),
+                Chip(
+                  avatar: const Icon(Icons.storage_rounded, size: 16, color: Colors.green),
+                  label: const Text(
+                    'Autenticado vía SQLite Local',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                  ),
+                  backgroundColor: Colors.green.shade50,
+                  side: BorderSide(color: Colors.green.shade200),
+                ),
+                const SizedBox(height: 20),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
